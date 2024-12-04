@@ -10,8 +10,13 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let board = parse_input(input);
+    Some(x_mas_count(&board))
 }
+
+// ===========================================
+//                  Part 1
+// ===========================================
 
 fn xmas_count(board: &Vec<Vec<char>>) -> u32 {
     board
@@ -88,9 +93,7 @@ fn neighbours(
         None => {
             for offset_x in -1..=1 {
                 for offset_y in -1..=1 {
-                    if offset_x != 0 || offset_y != 0 {
-                        populate_nb(&mut nb, (x, y), (offset_x, offset_y));
-                    }
+                    populate_nb(&mut nb, (x, y), (offset_x, offset_y));
                 }
             }
         }
@@ -106,6 +109,66 @@ fn xmas_next_letter(c: char) -> Option<char> {
         'A' => Some('S'),
         _ => None,
     }
+}
+
+// ===========================================
+//                  Part 2
+// ===========================================
+
+fn x_mas_count(board: &[Vec<char>]) -> u32 {
+    board
+        .iter()
+        .enumerate()
+        .map(|(x, row)| {
+            row.iter()
+                .enumerate()
+                .filter(|(y, _)| board[x][*y] == 'A')
+                .filter(|(y, _)| local_is_x_mas(board, (x, *y)))
+                .count()
+        })
+        .sum::<usize>() as u32
+}
+
+fn local_is_x_mas(board: &[Vec<char>], location: (usize, usize)) -> bool {
+    let x = location.0 as i32;
+    let y = location.1 as i32;
+
+    let max_x = board.len() as i32;
+    let max_y = board[0].len() as i32;
+
+    let mut mas_count = 0;
+
+    // Checks two left corners
+    for left_corner in [-1, 1] {
+        let offset_x = -1;
+        let offset_y = left_corner;
+
+        let new_x = x + offset_x;
+        let new_y = y + offset_y;
+
+        // Right corners
+        let nx_opp = x + 1;
+        let ny_opp = y - offset_y;
+
+        let location_valid = |nx, ny| !(nx < 0 || ny < 0 || nx >= max_x || ny >= max_y);
+
+        let is_mas = |a: char, b: char| a == 'M' && b == 'S' || a == 'S' && b == 'M';
+
+        if location_valid(new_x, new_y) && location_valid(nx_opp, ny_opp) {
+            if is_mas(
+                board[new_x as usize][new_y as usize],
+                board[nx_opp as usize][ny_opp as usize],
+            ) {
+                mas_count += 1;
+            }
+
+            if mas_count == 2 {
+                return true;
+            }
+        }
+    }
+
+    false
 }
 
 #[cfg(test)]
