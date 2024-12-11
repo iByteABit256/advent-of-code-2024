@@ -60,7 +60,7 @@ fn count_paths(map: &[Vec<u32>], start: (usize, usize), part_two: bool) -> u32 {
         if visited.contains(&node) {
             continue;
         }
-        
+
         let height = map[node.0][node.1];
 
         if height == 9 {
