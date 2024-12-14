@@ -66,7 +66,7 @@ pub fn part_two(input: &str) -> Option<u32> {
         if safety_factor < 95000000 {
             println!("Step: {}, Safety factor = {}", step, safety_factor);
             print_robots(&input);
-            return Some(step);
+            return Some(step + 1);
         }
         step += 1;
     }
@@ -81,12 +81,9 @@ fn tick(game: &mut GameData) {
 }
 
 fn add_with_clipping(a: (i32, i32), b: (i32, i32), limits: (i32, i32)) -> (i32, i32) {
-    let clip = |n: i32, sz: i32| if n < 0 { sz + n } else { n % sz };
+    let clip = |n: i32, sz: i32| (n + sz) % sz;
 
-    let new_x = clip(a.0 + b.0, limits.0);
-    let new_y = clip(a.1 + b.1, limits.1);
-
-    (new_x, new_y)
+    (clip(a.0 + b.0, limits.0), clip(a.1 + b.1, limits.1))
 }
 
 fn safety_factor(game: &GameData) -> u32 {
@@ -149,6 +146,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, Some(7860));
+        assert_eq!(result, Some(7861));
     }
 }
