@@ -122,12 +122,16 @@ fn quadrants(board_sz: (i32, i32)) -> Vec<Quadrant> {
 }
 
 fn print_robots(game: &GameData) {
-    let robot_exists = |pos: (i32, i32)| game.robots.iter().filter(|&r| pos == r.pos).next();
+    let robot_exists = |pos: (i32, i32)| game.robots.iter().find(|&r| pos == r.pos);
 
     for y in 0..game.board_size.1 {
         for x in 0..game.board_size.0 {
             let robot_exists = robot_exists((x, y)).is_some();
-            if robot_exists { print!("#") } else { print!(" ") }
+            if robot_exists {
+                print!("#")
+            } else {
+                print!(" ")
+            }
         }
         println!();
     }
