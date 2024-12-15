@@ -13,10 +13,10 @@ fn parse_input(input: &str, part_two: bool) -> Warehouse {
     let mut input = input.to_string();
 
     if part_two {
-        input = input.replace("#","##");
-        input = input.replace("O","[]");
-        input = input.replace(".","..");
-        input = input.replace("@","@.");
+        input = input.replace("#", "##");
+        input = input.replace("O", "[]");
+        input = input.replace(".", "..");
+        input = input.replace("@", "@.");
     }
 
     let mut lines = input.lines();
@@ -94,7 +94,7 @@ fn make_moves(warehouse: &Warehouse) -> Warehouse {
                 swap_pos(&mut warehouse, (x, y), new_pos);
                 warehouse.player = (new_pos.0 as usize, new_pos.1 as usize);
             }
-            'O'| '[' | ']' => {
+            'O' | '[' | ']' => {
                 if let Some(warehouse_updated) = move_obstacles(&warehouse, new_pos, next_move) {
                     warehouse = warehouse_updated;
                 }
@@ -140,13 +140,17 @@ fn move_obstacles(warehouse: &Warehouse, obj: (i32, i32), dir: (i32, i32)) -> Op
 
             print_board(&warehouse);
 
-            let opp_dir = if dir.0 == 0 { (0, dir.1 * -2) } else { (dir.0 * -1, 0) };
+            let opp_dir = if dir.0 == 0 {
+                (0, dir.1 * -2)
+            } else {
+                (dir.0 * -1, 0)
+            };
             curr_loc = add(curr_loc, opp_dir);
             curr_char = warehouse.board[curr_loc.0 as usize][curr_loc.1 as usize];
             while curr_char == '[' || curr_char == ']' {
                 let matching: char = if prev_char == '[' { ']' } else { '[' };
                 let matching_loc = add(curr_loc, if prev_char == '[' { (0, 1) } else { (0, -1) });
-    
+
                 println!("curr character: {}, curr loc: {:#?}", prev_char, curr_loc);
 
                 warehouse.board[curr_loc.0 as usize][curr_loc.1 as usize] = prev_char;
@@ -156,7 +160,7 @@ fn move_obstacles(warehouse: &Warehouse, obj: (i32, i32), dir: (i32, i32)) -> Op
 
                 curr_loc = add(curr_loc, opp_dir);
                 curr_char = warehouse.board[curr_loc.0 as usize][curr_loc.1 as usize];
-                
+
                 print_board(&warehouse);
             }
         } else {
